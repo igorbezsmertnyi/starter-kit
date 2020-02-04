@@ -1,0 +1,4 @@
+docker: docker-compose up
+web: rails s -p 3000
+webpack: ./bin/webpack-dev-server
+woroker: bundle exec sidekiq -C config/sidekiq.yml
