@@ -9,13 +9,14 @@ module State
     def serialized_state
       {
         server: {
-          dateTime: date_time
+          date: Date.today,
+          time: time
         }
       }
     end
 
-    def date_time
-      Time.current
+    def time
+      Time.current.strftime('%T')
     end
   end
 end

@@ -1,5 +1,6 @@
 const initialState = {
-  dateTime: null
+  date: null,
+  time: null
 }
 
 export default (state = initialState, action) => {

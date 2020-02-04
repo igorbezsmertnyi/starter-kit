@@ -6,7 +6,8 @@ let wrapped
 
 const mock = {
   server: {
-    dateTime: new Date()
+    date: new Date(),
+    time: '00:00:00'
   }
 }
 
@@ -24,10 +25,12 @@ describe('HomePage', () => {
   })
 
   it('display dateTime', () => {
-    const localTime = mock.server.dateTime.toLocaleDateString('us-US', {
+    const localTime = mock.server.date.toLocaleDateString('us-US', {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     })
 
-    expect(wrapped.getByText(localTime)).toBeInTheDocument()
+    const text = `${localTime} - 00:00:00` 
+
+    expect(wrapped.getByText(text)).toBeInTheDocument()
   })
 })

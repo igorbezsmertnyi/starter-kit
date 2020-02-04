@@ -8,7 +8,10 @@ RSpec.describe 'Home page index', type: :feature, js: true do
 
     it 'should display server datetime' do
       visit '/'
-      expect(page).to have_text(Date.today.strftime("%A, %-d %B %Y"))
+
+      text = "#{Date.today.strftime('%A, %-d %B %Y')} - #{Time.current.strftime('%T')}"
+
+      expect(page).to have_text(text)
     end
   end
 end

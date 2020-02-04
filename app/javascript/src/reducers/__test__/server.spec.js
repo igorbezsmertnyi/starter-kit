@@ -9,14 +9,14 @@ describe('reducer dateTime', () => {
     it('should be empty', () => {
       const newState = server(undefined, action)
   
-      expect(newState).toEqual({ dateTime: null })
+      expect(newState).toEqual({ date: null, time: null })
     })
   
     it('should set dateTime', () => {
-      const mock = { dateTime: new Date() }
+      const mock = { date: new Date(), time: '00:00:00' }
       const newState = server(mock, action)
   
-      expect(newState).toEqual({ dateTime: mock.dateTime })
+      expect(newState).toEqual({ date: mock.date, time: mock.time })
     })
   })
 })

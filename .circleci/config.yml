@@ -1,0 +1,133 @@
+version: 3
+jobs:
+  install_ruby_dependencies:
+    working_directory: ~/app
+    docker:
+      - image: circleci/ruby:2.7.0-node-browsers
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - ruby-dependencies-v2-{{ checksum "Gemfile.lock" }}
+            - ruby-dependencies-v2
+      - run:
+          name: Set bundle path
+          command: bundle config --local path vendor/bundle
+      - run:
+          name: Bundle Install
+          command: |
+            bundle check || bundle install --deployment
+      - save_cache:
+          paths:
+            - vendor/bundle
+          key: ruby-dependencies-v2-{{ checksum "Gemfile.lock" }}
+
+  install_javascript_dependencies:
+    working_directory: ~/app
+    docker:
+      - image: circleci/ruby:2.7.0-node-browsers
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - javascript-dependencies-v2-{{ checksum "yarn.lock" }}
+            - javascript-dependencies-v2
+      - run:
+          name: Which yarn?
+          command: yarn -v
+      - run:
+          name: Install Yarn
+          command: yarn install
+      - save_cache:
+          paths:
+            - node_modules
+          key: javascript-dependencies-v2-{{ checksum "yarn.lock" }}
+
+  run_frontend_test:
+    working_directory: ~/app
+    docker:
+      - image: circleci/ruby:2.6.3-node-browsers
+      - image: postgres:11.0-alpine
+    parallelism: 2
+    environment:
+      DB_PORT: 5432
+      RAILS_ENV: test
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - ruby-dependencies-v2-{{ checksum "Gemfile.lock" }}
+            - ruby-dependencies-v2
+      - restore_cache:
+          keys:
+            - javascript-dependencies-v2-{{ checksum "yarn.lock" }}
+            - javascript-dependencies-v2
+      - run:
+          name: Set bundle path
+          command: bundle config --local path vendor/bundle
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432
+      - run:
+          name: Setup DB
+          command: bundle exec rails db:create db:schema:load
+      - run:
+          name: Run Jest
+          command: yarn test
+
+  run_backend_tests:
+    working_directory: ~/app
+    docker:
+      - image: circleci/ruby:2.6.3-node-browsers
+      - image: postgres:11.0-alpine
+    parallelism: 2
+    environment:
+      DB_PORT: 5432
+      RAILS_ENV: test
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - ruby-dependencies-v2-{{ checksum "Gemfile.lock" }}
+            - ruby-dependencies-v2
+      - restore_cache:
+          keys:
+            - javascript-dependencies-v2-{{ checksum "yarn.lock" }}
+            - javascript-dependencies-v2
+      - run:
+          name: Set bundle path
+          command: bundle config --local path vendor/bundle
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432
+      - run:
+          name: Setup DB
+          command: bundle exec rails db:create db:schema:load
+      - run:
+          name: Run Rspec
+          command: |
+            TESTFILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+            bundle exec rspec --format documentation \
+                              --format RspecJunitFormatter \
+                              -o ~/rspec/rspec.xml \
+                              -- ${TESTFILES}
+      - store_test_results:
+          path: ~/rspec
+
+      - store_artifacts:
+          path: tmp/capybara
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - install_ruby_dependencies
+      - install_javascript_dependencies
+      - run_frontend_test:
+          requires:
+            - install_ruby_dependencies
+            - install_javascript_dependencies
+      - run_backend_tests:
+          requires:
+            - install_ruby_dependencies
+            - install_javascript_dependencies
