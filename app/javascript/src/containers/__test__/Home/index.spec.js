@@ -24,7 +24,7 @@ describe('HomePage', () => {
   })
 
   it('display dateTime', () => {
-    const localTime = mock.server.dateTime.toLocaleDateString('pl-PL', {
+    const localTime = mock.server.dateTime.toLocaleDateString('us-US', {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     })
 

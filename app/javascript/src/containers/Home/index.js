@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 const Home = ({ server }) => {
-  const localTime = new Date(server.dateTime).toLocaleDateString('pl-PL', {
+  const localTime = new Date(server.dateTime).toLocaleDateString('us-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   })
 

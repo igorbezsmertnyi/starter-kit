@@ -42,6 +42,13 @@ group :development, :test do
   gem 'pry'
   gem 'pry-remote'
   gem 'dotenv-rails'
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
+  gem 'capybara'
+  gem 'database_cleaner'
+  gem 'shoulda-matchers'
+  gem 'timecop'
+  gem 'webdrivers'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end
