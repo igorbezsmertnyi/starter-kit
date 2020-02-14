@@ -5,6 +5,10 @@ services:
     ports:
       - 5432:5432
   redis:
-    image: redis:4.0-alpine
+    image: redis:6.0-rc1
     ports:
       - 6379:6379
+  memcached:
+    image: memcached:1.5.12-alpine
+    ports:
+      - 11211:11211

@@ -31,7 +31,6 @@ gem 'redis'
 gem 'sidekiq'
 
 gem 'devise'
-gem 'slack-ruby-client'
 
 gem 'awesome_print'
 
