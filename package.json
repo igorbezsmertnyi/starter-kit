@@ -29,8 +29,8 @@
     "webpack-dev-server": "^3.10.2"
   },
   "engines": {
-    "node": "11.2.0",
-    "npm": "6.13.6"
+    "node": "12.16.0",
+    "npm": "6.13.4"
   },
   "scripts": {
     "test": "jest --watchAll"
